@@ -1,0 +1,26 @@
+[all:vars]
+ansible_connection=network_cli
+ansible_user=rodrigo
+ansible_password=rodrigo@123
+become=yes
+become_method=enable
+
+[ios]
+CSR1 ansible_host=192.168.0.47
+CSR2 ansible_host=10.0.0.18
+CSR3 ansible_host=10.0.0.14
+
+[ios:vars]
+ansible_network_os=ios
+
+[nxos]
+NXOS ansible_host=10.0.0.6
+
+[nxos:vars]
+ansible_network_os=nxos
+
+[iosxr]
+XRV ansible_host=10.0.0.2
+
+[iosxr:vars]
+ansible_network_os=iosxr

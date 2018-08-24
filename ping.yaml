@@ -1,0 +1,20 @@
+---
+- name: Test device reachable
+  hosts: all
+  gather_facts: no
+
+  tasks:
+    - command: ping -c1 {{ inventory_hostname }}
+      delegate_to: localhost
+      register: ping_result
+      ignore_errors: yes
+
+    - group_by: key=reachable
+      when: ping_result is success
+
+- name: Your Actual play
+  hosts: reachable
+  gather_facts: no
+
+  tasks:
+  - debug: msg="This device {{ inventory_hostname }} is reachable"

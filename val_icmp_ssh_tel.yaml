@@ -1,0 +1,47 @@
+---
+- name: PING TESTS
+  hosts: all
+  gather_facts: no
+
+  tasks:
+    - command: ping -c1 {{ inventory_hostname }}
+      delegate_to: localhost
+      register: ping_result
+      ignore_errors: yes
+
+    - group_by: key=reachable
+      when: ping_result is success
+
+- name: TESTING DEVICE PORT 22
+  hosts: reachable
+  gather_facts: no
+
+  tasks:
+    - wait_for: host={{ inventory_hostname }} port=22 timeout=2
+      delegate_to: localhost
+      register: ssh_result
+      ignore_errors: yes
+
+    - group_by: key=ssh
+      when: ssh_result is success
+
+
+- name: TESTING DEVICE PORT 23
+  hosts: ssh
+  gather_facts: no
+
+  tasks:
+    - wait_for: host={{ inventory_hostname }} port=23 timeout=2
+      delegate_to: localhost
+      register: telnet_result
+      ignore_errors: yes
+
+    - group_by: key=telnet
+      when: telnet_result is success
+
+- name: RUN YOUR PLAY
+  hosts: telnet
+  gather_facts: no
+
+  tasks:
+    - debug: msg="This device {{ inventory_hostname }} are reachable with port 23 and 22 opened"
